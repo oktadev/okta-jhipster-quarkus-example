@@ -25,14 +25,14 @@
     "clientFramework": "angularX",
     "clientTheme": "none",
     "clientThemeVariant": "",
-    "creationTimestamp": 1614722962443,
+    "creationTimestamp": 1614834465776,
     "jhiPrefix": "jhi",
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "otherModules": [
       {
         "name": "generator-jhipster-quarkus",
-        "version": "1.0.0"
+        "version": "1.1.1"
       }
     ],
     "enableTranslation": true,
@@ -41,7 +41,7 @@
     "blueprints": [
       {
         "name": "generator-jhipster-quarkus",
-        "version": "1.0.0"
+        "version": "1.1.1"
       }
     ]
   }

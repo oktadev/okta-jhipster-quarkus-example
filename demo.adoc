@@ -1,0 +1,119 @@
+:experimental:
+// Define unicode for Apple Command key.
+:commandkey: &#8984;
+:toc: macro
+
+= Quarkus and JHipster Demo
+
+Quarkus is a Kubernetes-native, Java framework for building high-performance web, serverless, and native apps. It uses Ahead of Time (AOT) compilation and aggressive optimizations during the build process. This results in impressive startup performance.
+
+This demo will walk you through the steps to use JHipster, the Quarkus blueprint, and OAuth to build a native and secure full stack application.
+
+**Prerequisites:**
+
+- https://sdkman.io/[Java 11]+
+- https://nodejs.org/[Node 14]+
+- https://docs.docker.com/get-docker/[Docker]
+- https://cli.okta.com/[Okta CLI]
+
+toc::[]
+
+== Install JHipster and its Quarkus Blueprint
+
+Install JHipster and its Quarkus blueprint using `npm`:
+
+[source,shell]
+----
+# Install JHipster globally
+npm install -g generator-jhipster@6.10.5
+
+# Install the JHipster Quarkus blueprint
+npm install -g generator-jhipster-quarkus@1.1.1
+----
+
+The `jhipster-quarkus` command is now available as a shortcut for `jhipster --blueprints quarkus`.
+
+== Generate a JHipster Quarkus Application
+
+. Open a terminal and create a directory for your application.
+
+  mkdir jhipster-quarkus && cd jhipster-quarkus
+  # oh-my-zsh users: take jhipster-quarkus
+
+. Invoke the `jhipster-quarkus` command to start the application creation wizard.
+
+  jhipster-quarkus
+
+. Choose **OAuth 2.0 / OIDC** for authorization. Select the defaults for everything else.
+
+== Test OAuth 2.0 / OIDC with Keycloak
+
+JHipster Quarkus generates a set of Docker Compose files to help you bootstrap a dev environment. It even imports Keycloak default data with users and apps, so you don't have to.
+
+Keycloak is the default OIDC engine used by JHipster, and you can run it in a Docker container.
+
+. Start a Keycloak container using the command below:
+
+  docker-compose -f src/main/docker/keycloak.yml up -d
+
+. Start your app using Maven:
+
+  ./mvnw
+
+. Open `http://localhost:8080` in your favorite browser and sign in with `admin/admin`.
+
+== Integrate JHipster Quarkus with Okta
+
+. Open a terminal, navigate to your Quarkus app’s directory, and run `okta register`. If you already an Okta developer account, run `okta login`.
+
+. Run `okta apps create jhipster` in your Quarkus app’s directory. Accept the defaults when prompted for redirect URIs.
+
+. The Okta CLI will create an `.okta.env` in the current directory. Source the file to set environment variables and start your application with Maven.
+
+  source .okta.env
+  ./mvnw
++
+TIP: Make sure to add `*.env` to your `.gitignore` so you don’t accidentally commit your client secret!
+
+. Open an incognito window to `http://localhost:8080` and sign in with Okta.
+
+If you prefer to create your Okta OIDC app in your browser, see the https://developer.okta.com/blog/2021/03/08/jhipster-quarkus-oidc#use-oktas-developer-console-to-configure-jhipster[Admin Console instructions] in this demo's related blog post.
+
+== Go Native with Quarkus and GraalVM
+
+. Run Maven’s `package` command with the `native` profile:
+
+  ./mvnw package -Pnative -DskipTests
+
+. If you’re not using a JDK with GraalVM included, you’ll get an error:
+
+  [error]: Build step io.quarkus.deployment.pkg.steps.NativeImageBuildStep#build threw an
+  exception: java.lang.RuntimeException: Cannot find the `native-image` in the
+  GRAALVM_HOME, JAVA_HOME and System PATH. Install it using `gu install native-image`
+
+. Solve this by using SDKMAN to install Java 11 with GraalVM.
+
+  sdk install java 21.2.0.r11-grl
+  gu install native-image
+
+. Once this process completes, rerun the Maven `package` command.
+
+  ./mvnw package -Pnative -DskipTests
+
+. After roughly three minutes, the native executable should be ready. Start it as a native executable.
+
+  target/*runner
+
+. You can see the memory consumption in MB using the `ps` command:
+
+  ps -o pid,rss,command | grep --color jhipster | awk '{$2=int($2/1024)"M";}{ print;}'
+
+. Go to `http://localhost:8080` and ensure everything works.
+
+. Enjoy your success! 🍾
+
+== Learn More About Quarkus and JHipster
+
+🚀 Find the code on GitHub: https://github.com/oktadev/okta-jhipster-quarkus-example[@oktadev/okta-jhipster-quarkus-example].
+
+👀 Read the blog post: https://developer.okta.com/blog/2021/03/08/jhipster-quarkus-oidc[Fast Java Made Easy with Quarkus and JHipster].
